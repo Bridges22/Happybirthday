@@ -546,6 +546,10 @@
             .final-text {
                 font-size: 2.8rem;
                 text-align: center;
+                text-shadow: 0 0 15px var(--pink);
+                /* Simpler shadow */
+                animation: floatTitle 5s ease-in-out infinite;
+                /* Remove glow animation */
             }
 
             #message {
@@ -603,12 +607,15 @@
             .floating-msg {
                 font-size: 1.1rem;
                 font-weight: bold;
-                text-shadow: 0 0 8px var(--pink), 0 0 15px var(--pink);
+                text-shadow: 0 0 10px var(--pink);
+                /* Simpler shadow */
                 white-space: normal;
                 /* Allow wrapping on very small screens */
                 max-width: 80%;
                 /* Prevent messages from being too wide */
                 text-align: center;
+                animation: floatWish 35s linear infinite;
+                /* Remove glowPulse */
             }
 
             .modal-content {
@@ -900,7 +907,9 @@ Today is your day. Enjoy every moment. ❤️`;
         // =============== FIREFLIES BACKGROUND ===============
         function spawnFireflies() {
             const container = document.getElementById('fireflies-container');
-            for (let i = 0; i < 20; i++) { // Reduced count from 30 to 20
+            const isMobile = window.innerWidth <= 768;
+            const count = isMobile ? 12 : 20; // Reduced count for mobile
+            for (let i = 0; i < count; i++) {
                 const firefly = document.createElement('div');
                 firefly.classList.add('firefly');
                 firefly.style.left = (Math.random() * 100) + 'vw';
@@ -987,9 +996,12 @@ Today is your day. Enjoy every moment. ❤️`;
             const imageData = tempCtx.getImageData(0, 0, 700, 180);
             const data = imageData.data;
 
+            const isMobile = window.innerWidth <= 768;
+            const sampling = isMobile ? 16 : 8; // Fewer particles on mobile
+
             nameParticles = [];
-            for (let i = 0; i < data.length; i += 8) {  // every 2nd pixel for performance
-                if (data[i + 3] > 100) {
+            for (let i = 0; i < data.length; i += sampling) {  // every 2nd or 4th pixel
+                if (data[i + 3] > 102) {
                     const x = (i / 4) % 700;
                     const y = Math.floor((i / 4) / 700);
                     nameParticles.push({
@@ -1065,7 +1077,9 @@ Today is your day. Enjoy every moment. ❤️`;
             }
             explode() {
                 this.exploded = true;
-                for (let i = 0; i < 75; i++) {
+                const isMobile = window.innerWidth <= 768;
+                const count = isMobile ? 35 : 75; // Fewer particles on mobile
+                for (let i = 0; i < count; i++) {
                     particles.push({
                         x: this.x, y: this.y,
                         vx: Math.random() * 14 - 7,
@@ -1122,11 +1136,15 @@ Today is your day. Enjoy every moment. ❤️`;
         function launchFinale() {
             canvas.style.display = 'block';
             animateFireworks();
+
+            const isMobile = window.innerWidth <= 768;
+            const interval = isMobile ? 350 : 180; // Slower rate on mobile
+
             fireworksInterval = setInterval(() => {
                 launchFirework();
-                confetti({ particleCount: 60, spread: 80, origin: { y: 0.6 } });
-            }, 180);
-            setTimeout(() => confetti({ particleCount: 400, spread: 120, origin: { y: 0.5 } }), 300);
+                confetti({ particleCount: isMobile ? 30 : 60, spread: 80, origin: { y: 0.6 } });
+            }, interval);
+            setTimeout(() => confetti({ particleCount: isMobile ? 150 : 400, spread: 120, origin: { y: 0.5 } }), 300);
         }
 
         // Click balloons or hearts
